@@ -7,13 +7,26 @@ output: html_document
 
 Dataset 1: ChickenWeight
 
-```{r}
+
+```{r, results="hide"}
 
 library(tidyverse)
 library(dplyr)
 data()
+library(rmarkdown)
 
 ?ChickWeight
+?airquality
+airquality
+?Orange
+?Titanic
+data("Titanic")
+
+```
+
+```{r}
+
+
 
 ggplot(data = ChickWeight, mapping = aes(x = Time, y = weight, color = Diet, group = Chick)) +
   geom_line() +
@@ -41,8 +54,7 @@ Dataset 2: airquality
 
 
 ```{r}
-?airquality
-airquality
+
 
 #Create the days variable which converts Month & Day to just Days after May 1
 ozone <- airquality %>% 
@@ -65,14 +77,14 @@ ozone %>%
   
 ```
 
-These figures are derived from the New York State Department of Conservation and the National Weather Service. It contains the daily readings of ozone, solar radiation, wind and temperature from May 1, 1973 to September 30, 1973. The highest average ozone is in the month of August with 59.96 ppb with July not far off at 59.1 The best air quality from this dataset is in May with an average of 23.6 ppb. Judging from personal anecdote, I believe the rise in air pollutants may have to do with the use of air conditioning units in the city during the Summer. If possible, in future studies, it would be interesting to see the changes in ozone throughout the entire year if not additional years.
+These figures are derived from the New York State Department of Conservation and the National Weather Service. It contains the daily readings of ozone, solar radiation, wind and temperature from May 1, 1973 to September 30, 1973. The highest average ozone is in the month of August with 59.96 ppb with July not far off at 59.1 The best air quality from this dataset is in May with an average of 23.6 ppb. Judging from personal anecdote and the data, I believe the rise in air pollutants may have to do with the use of air conditioning units in the city during the Summer. If possible, in future studies, it would be interesting to see the changes in ozone throughout the entire year if not additional years.
 
 
 Dataset 3: Orange
 
 
 ```{r}
-?Orange
+
 
 #Linear Model for Orange Tree growth
 ggplot(data = Orange, mapping = aes(x = age, y = circumference, group = Tree, color = Tree)) +
@@ -87,14 +99,36 @@ omax <- Orange%>%
 glimpse(omax)
 ```
 
-The Orange dataset comes from Draper's Applied Regression Analysis exercise. It follows the growth of 5 orange trees from 12/31/1968. After a couple hundred days, measurements of the circumference of the 5 trees are taken. The trees are labeled in order of increasing diameter. Tree 1 has a max of 145 mm of trunk which was observed at day 1582. Tree 4 has a max of 214 mm of trunk which was observed at day 1582. There is not much of a reason to choose this dataset besides its easy analysis and ease of communicating the fact same species trees grow at different rates. Additional studies into this topic may include using additional fruit trees to see the differences in growth.
+The Orange dataset comes from Draper's Applied Regression Analysis exercise. It follows the growth of 5 orange trees from 12/31/1968. After every couple hundred days, measurements of the circumference of the 5 trees are taken. The trees are labeled in order of increasing diameter. Tree 1 has a max of 145 mm of trunk which was observed at day 1582. Tree 4 has a max of 214 mm of trunk which was observed at day 1582. This dataset was chosen to study the growth of orange trees and the variance in their growth rate. Additional studies into this topic may include using different fruit trees to see the differences in growth.
+
+
+Dataset 4: Titanic
 
 ```{r}
 
+data.frame(Titanic)
 ?Titanic
-data("Titanic")
-
 ship <- as_tibble(Titanic) %>% 
-  filter(Survived == 'Yes')
+  filter(Class != 'Crew')
+
+
+ggplot(data = ship) +
+  geom_col(mapping = aes(x = Survived, y = n, fill = Survived)) +
+  facet_grid(Class ~ Sex)
+
+propsurv <- ship %>%
+  group_by(Class, Sex) %>% 
+  mutate(prop = n/sum(n))
+
+ggplot(data = propsurv, mapping = aes(x = Survived, y = prop, fill = Survived)) +
+  geom_col() +
+  facet_grid(Class ~ Sex)
+
 ```
+
+The Titanic data was collected by the British Board of Trade in their investigation of the famous sinking. In this dataset, we have the number of people on board that survived or died categorized into class, sex and age. I filtered out the Crew for analysis because I was more interested in the breakdown of which passengers were prioritized for the lifeboats. From there, I calculated the proportion of people that died in their respective category. From the plot, we can see children and women were highly prioritized and the Class didn't matter as much for men as most men died regardless of class. For women in the 3rd class, you see that they died at a much higher rate than the women in the upper classes. If this dataset could be improved, I would love to analysize the subgroups within class or other categorical variables like room location on ship, etc.
+
+
+
+
 
